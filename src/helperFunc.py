@@ -24,7 +24,7 @@ def about(url ):
   jData = json.loads(response.text)
   return jData['about']
 
-def getProcessorFlow(url,token):
+def getProcessorFlow(url):
   response = requests.get(url, verify=False)
   jData = json.loads(response.text)
   return jData['processGroups']
