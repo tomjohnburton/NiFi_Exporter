@@ -15,8 +15,6 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 CONTENT_TYPE_LATEST = str('text/plain; version=0.0.4; charset=utf-8')
 
 BASE_URL = os.environ['BASE_URL']
-USERNAME = os.environ['USERNAME']
-PASSWORD = os.environ['PASSWORD']
 
 app = Flask(import_name=__name__)
 
@@ -30,12 +28,10 @@ def metrics():
   #print (globals().keys())
   registry = CollectorRegistry()
   url=BASE_URL+"/nifi-api/access/token"
-  token = getToken(url,USERNAME,PASSWORD  )
-
 
   #### ====  cluster nodes status ==== ####
   url=BASE_URL+"/nifi-api/controller/cluster"
-  cluster = getCluster(url,token)
+  cluster = getCluster(url)
   for item in cluster:
     NodeName = {"instance":item['address']}
     nodeStatus =  Gauge('nifi_nodes_status','Nifi node status',NodeName.keys(),registry=registry)
@@ -55,14 +51,14 @@ def metrics():
 
   #### ====  general cluster info ==== ####
   url=BASE_URL+"/nifi-api/flow/about"
-  flowAbout = about(url,token)
+  flowAbout = about(url)
   nifiVersion = Info('nifi_cluster_version','This is the version',registry=registry)
   nifiVersion.info({"title":flowAbout['title'], "version":flowAbout['version'] , "timezone": flowAbout['timezone']})
   lst.append(prometheus_client.generate_latest(nifiVersion))
 
   #### ====  general cluster status ==== ####
   url=BASE_URL+"/nifi-api/flow/status"
-  generalFlow = getFlow(url,token)
+  generalFlow = getFlow(url)
   with open('cluster_status.csv',mode="r") as csv_file:
       csv_reader = csv.reader(csv_file, delimiter=',')
       line_num = 0
@@ -78,7 +74,7 @@ def metrics():
 
 
   url = BASE_URL+"/nifi-api/process-groups/root/process-groups"
-  nifi_group = getProcessorFlow(url,token)
+  nifi_group = getProcessorFlow(url)
   for PG in nifi_group:
     processorName = {"processorName": PG['component']['name']}
     processorQueue = Gauge('nifi_amount_items_queued','Total number of items queued by the processor',processorName.keys(), registry=registry)
