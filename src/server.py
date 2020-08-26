@@ -15,8 +15,8 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 ## Variables ###
 CONTENT_TYPE_LATEST = str('text/plain; version=0.0.4; charset=utf-8')
 
-BASE_URL = "http://localhost:3000"
-CONNECTION_UUID = "016e1008-a187-12f8-4dac-773025ba9642"
+BASE_URL = os.environ['BASE_URL']
+CONNECTION_UUID = os.environ['CONNECTION_UUID']
 
 app = Flask(import_name=__name__)
 
